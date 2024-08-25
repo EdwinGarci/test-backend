@@ -34,8 +34,6 @@ class VoucherService
                   ->whereDate('created_at', '<=', $endDate);
         }
 
-        var_dump($query->toSql(), $query->getBindings());
-
         return $query->paginate(perPage: $paginate, page: $page);
     }
 

@@ -9,6 +9,43 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @OA\Post(
+ *     path="/api/v1/vouchers",
+ *     tags={"Vouchers"},
+ *     summary="Sube y procesa archivos XML de vouchers",
+ *     description="Permite al usuario subir archivos XML con información de vouchers para su procesamiento. Los archivos se procesan en segundo plano.",
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\MediaType(
+ *             mediaType="multipart/form-data",
+ *             @OA\Schema(
+ *                 type="object",
+ *                 @OA\Property(
+ *                     property="files",
+ *                     type="array",
+ *                     @OA\Items(type="string", format="binary")
+ *                 )
+ *             )
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=202,
+ *         description="Los vouchers se están procesando.",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Los vouchers se están procesando.")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response=400,
+ *         description="Error en el procesamiento de los archivos XML.",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Error en el procesamiento de los archivos XML.")
+ *         )
+ *     ),
+ *     @OA\Tag(name="Vouchers")
+ * )
+ */
 class StoreVouchersHandler
 {
     public function __construct(private readonly VoucherService $voucherService)

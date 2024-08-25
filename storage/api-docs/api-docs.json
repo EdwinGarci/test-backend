@@ -288,6 +288,310 @@
                     }
                 }
             }
+        },
+        "/api/v1/vouchers": {
+            "get": {
+                "tags": [
+                    "Vouchers"
+                ],
+                "summary": "Obtener lista de vouchers",
+                "description": "Recupera una lista de vouchers con posibilidad de paginación y filtros opcionales.",
+                "operationId": "1a0f51b933a63a62ef40aeca5a59805c",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Número de página para la paginación",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "paginate",
+                        "in": "query",
+                        "description": "Cantidad de elementos por página",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "series",
+                        "in": "query",
+                        "description": "Serie del voucher para filtrar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "A001"
+                        }
+                    },
+                    {
+                        "name": "number",
+                        "in": "query",
+                        "description": "Número del voucher para filtrar",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "123456"
+                        }
+                    },
+                    {
+                        "name": "startDate",
+                        "in": "query",
+                        "description": "Fecha de inicio para filtrar (formato YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-01-01"
+                        }
+                    },
+                    {
+                        "name": "endDate",
+                        "in": "query",
+                        "description": "Fecha de fin para filtrar (formato YYYY-MM-DD)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date",
+                            "example": "2024-12-31"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lista de vouchers obtenida exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/VoucherResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "No se encontraron vouchers con los parámetros especificados."
+                    },
+                    "500": {
+                        "description": "Error interno del servidor."
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Vouchers"
+                ],
+                "summary": "Sube y procesa archivos XML de vouchers",
+                "description": "Permite al usuario subir archivos XML con información de vouchers para su procesamiento. Los archivos se procesan en segundo plano.",
+                "operationId": "a9b60d1bfb7e9df31b6c204a5d8a0ebe",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "202": {
+                        "description": "Los vouchers se están procesando.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Los vouchers se están procesando."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Error en el procesamiento de los archivos XML.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error en el procesamiento de los archivos XML."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/vouchers/{id}": {
+            "delete": {
+                "tags": [
+                    "Vouchers"
+                ],
+                "summary": "Elimina un voucher por ID",
+                "description": "Permite eliminar un voucher específico utilizando su ID.",
+                "operationId": "a1a83d807576d98d8964f741ed638fbb",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID del voucher a eliminar.",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "format": "uuid"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Voucher eliminado correctamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Eliminado correctamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Voucher no encontrado o no se pudo eliminar.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Voucher no encontrado o no se pudo eliminar."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error interno del servidor."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/v1/vouchers/total-amounts": {
+            "get": {
+                "tags": [
+                    "Vouchers"
+                ],
+                "summary": "Obtiene los montos totales de los vouchers",
+                "description": "Retorna los montos totales agrupados por moneda para todos los vouchers.",
+                "operationId": "256ea41a15e7b57623b26b9cfdd44fe2",
+                "responses": {
+                    "200": {
+                        "description": "Montos totales obtenidos exitosamente.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "properties": {
+                                                "USD": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 1234.56
+                                                },
+                                                "EUR": {
+                                                    "type": "number",
+                                                    "format": "float",
+                                                    "example": 789.01
+                                                }
+                                            },
+                                            "type": "object",
+                                            "additionalProperties": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Error interno del servidor.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Error interno del servidor."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -309,6 +613,95 @@
                     }
                 },
                 "type": "object"
+            },
+            "VoucherLineResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Producto A"
+                    },
+                    "quantity": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 10
+                    },
+                    "unit_price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 50
+                    },
+                    "voucher": {
+                        "$ref": "#/components/schemas/VoucherResource"
+                    }
+                },
+                "type": "object"
+            },
+            "VoucherResource": {
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "issuer_name": {
+                        "type": "string",
+                        "example": "Empresa XYZ"
+                    },
+                    "issuer_document_type": {
+                        "type": "string",
+                        "example": "RUC"
+                    },
+                    "issuer_document_number": {
+                        "type": "string",
+                        "example": "12345678901"
+                    },
+                    "receiver_name": {
+                        "type": "string",
+                        "example": "Juan Pérez"
+                    },
+                    "receiver_document_type": {
+                        "type": "string",
+                        "example": "DNI"
+                    },
+                    "receiver_document_number": {
+                        "type": "string",
+                        "example": "98765432"
+                    },
+                    "total_amount": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 1000
+                    },
+                    "series": {
+                        "type": "string",
+                        "example": "A001"
+                    },
+                    "number": {
+                        "type": "string",
+                        "example": "123456"
+                    },
+                    "voucher_type": {
+                        "type": "string",
+                        "example": "Factura"
+                    },
+                    "currency": {
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    },
+                    "lines": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/VoucherLineResource"
+                        }
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -324,6 +717,10 @@
         {
             "name": "Authentication",
             "description": "Authentication"
+        },
+        {
+            "name": "Vouchers",
+            "description": "Vouchers"
         }
     ],
     "security": [

@@ -8,6 +8,28 @@ use App\Models\Voucher;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     schema="VoucherResource",
+ *     type="object",
+ *     @OA\Property(property="id", type="integer", example=1),
+ *     @OA\Property(property="issuer_name", type="string", example="Empresa XYZ"),
+ *     @OA\Property(property="issuer_document_type", type="string", example="RUC"),
+ *     @OA\Property(property="issuer_document_number", type="string", example="12345678901"),
+ *     @OA\Property(property="receiver_name", type="string", example="Juan Pérez"),
+ *     @OA\Property(property="receiver_document_type", type="string", example="DNI"),
+ *     @OA\Property(property="receiver_document_number", type="string", example="98765432"),
+ *     @OA\Property(property="total_amount", type="number", format="float", example=1000.00),
+ *     @OA\Property(property="series", type="string", example="A001"),
+ *     @OA\Property(property="number", type="string", example="123456"),
+ *     @OA\Property(property="voucher_type", type="string", example="Factura"),
+ *     @OA\Property(property="currency", type="string", example="USD"),
+ *     @OA\Property(property="user", ref="#/components/schemas/UserResource"),
+ *     @OA\Property(property="lines", type="array",
+ *         @OA\Items(ref="#/components/schemas/VoucherLineResource")
+ *     ),
+ * )
+ */
 class VoucherResource extends JsonResource
 {
     /**
