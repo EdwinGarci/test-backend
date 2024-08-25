@@ -26,6 +26,10 @@ class VoucherResource extends JsonResource
             'receiver_document_type' => $this->resource->receiver_document_type,
             'receiver_document_number' => $this->resource->receiver_document_number,
             'total_amount' => $this->resource->total_amount,
+            'series' => $this->resource->series,
+            'number' => $this->resource->number,
+            'voucher_type' => $this->resource->voucher_type,
+            'currency' => $this->resource->currency,
             'user' => $this->whenLoaded(
                 'user',
                 fn () => UserResource::make($this->resource->user),

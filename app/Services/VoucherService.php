@@ -11,9 +11,32 @@ use SimpleXMLElement;
 
 class VoucherService
 {
-    public function getVouchers(int $page, int $paginate): LengthAwarePaginator
+    public function getVouchers(
+        int $page, 
+        int $paginate, 
+        ?string $series = null, 
+        ?string $number = null, 
+        ?string $startDate = null, 
+        ?string $endDate = null): LengthAwarePaginator
     {
-        return Voucher::with(['lines', 'user'])->paginate(perPage: $paginate, page: $page);
+        $query = Voucher::with(['lines', 'user']);
+
+        if ($series) {
+            $query->where('series', $series);
+        }
+
+        if ($number) {
+            $query->where('number', $number);
+        }
+
+        if ($startDate && $endDate) {
+            $query->whereDate('created_at', '>=', $startDate)
+                  ->whereDate('created_at', '<=', $endDate);
+        }
+
+        var_dump($query->toSql(), $query->getBindings());
+
+        return $query->paginate(perPage: $paginate, page: $page);
     }
 
     public function getVoucherById(string $voucherId): Voucher
@@ -42,6 +65,16 @@ class VoucherService
     {
         $xml = new SimpleXMLElement($xmlContent);
 
+        // Serie - Número
+        $voucherID = (string) $xml->xpath('//cbc:ID')[0];
+        list($series, $number) = explode('-', $voucherID);
+
+        // Tipo de comprobante
+        $voucherType = (string) $xml->xpath('//cbc:InvoiceTypeCode')[0];
+
+        // Moneda
+        $currency = (string) $xml->xpath('//cbc:DocumentCurrencyCode')[0];
+
         $issuerName = (string) $xml->xpath('//cac:AccountingSupplierParty/cac:Party/cac:PartyName/cbc:Name')[0];
         $issuerDocumentType = (string) $xml->xpath('//cac:AccountingSupplierParty/cac:Party/cac:PartyIdentification/cbc:ID/@schemeID')[0];
         $issuerDocumentNumber = (string) $xml->xpath('//cac:AccountingSupplierParty/cac:Party/cac:PartyIdentification/cbc:ID')[0];
@@ -60,6 +93,10 @@ class VoucherService
             'receiver_document_type' => $receiverDocumentType,
             'receiver_document_number' => $receiverDocumentNumber,
             'total_amount' => $totalAmount,
+            'series' => $series,
+            'number' => $number,
+            'voucher_type' => $voucherType,
+            'currency' => $currency,
             'xml_content' => $xmlContent,
             'user_id' => $user->id,
         ]);
@@ -93,4 +130,14 @@ class VoucherService
 
         return $voucher->delete();
     }
+
+    public function getTotalAmounts(): array
+    {
+        return Voucher::selectRaw('currency, SUM(total_amount) as total')
+                ->groupBy('currency')
+                ->pluck('total', 'currency')
+                ->toArray();
+    }
+
+
 }

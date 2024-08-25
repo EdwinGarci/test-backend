@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Vouchers;
 
 use App\Http\Resources\Vouchers\VoucherResource;
+use App\Jobs\ProcessVouchersUpload;
 use App\Services\VoucherService;
 use Exception;
 use Illuminate\Http\Request;
@@ -29,11 +30,12 @@ class StoreVouchersHandler
             }
 
             $user = auth()->user();
-            $vouchers = $this->voucherService->storeVouchersFromXmlContents($xmlContents, $user);
+
+            ProcessVouchersUpload::dispatch($xmlContents, $user);
 
             return response([
-                'data' => VoucherResource::collection($vouchers),
-            ], 201);
+                'message' => 'Los vouchers se están procesando.',
+            ], 202);
         } catch (Exception $exception) {
             return response([
                 'message' => $exception->getMessage(),

@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('receiver_document_type');
             $table->string('receiver_document_number');
             $table->decimal('total_amount', 8, 2);
+            $table->string('series')->nullable();
+            $table->string('number')->nullable();
+            $table->string('voucher_type')->nullable();
+            $table->string('currency')->nullable();
             $table->longText('xml_content');
             $table->uuid('user_id');
             $table->timestamps();
